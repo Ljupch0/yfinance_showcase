@@ -1,0 +1,37 @@
+---
+title: "yfinance showcase"
+output: html_notebook
+---
+
+```{r}
+library(yfinance)
+library(tidyverse)
+```
+
+# Find the yahoo finance ticker, in order to download data
+```{r}
+
+companies <- c("AstraZeneca", "Amgen", "Bristol-Myers Squibb", "Eli Lilly and Company", "Johnson & Johnson", "Merck & Co.", "Novartis", "Pfizer Inc.")
+
+
+yfinance::search_stock(search_term = companies, keep_results = "top")
+
+
+tibble(
+  companies = companies
+) %>% 
+  mutate(
+    ticker = yfinance::search_stock(search_term = companies, keep_results = "top")$symbol,
+    full_name = yfinance::search_stock(search_term = companies, keep_results = "top")$longname,
+  ) %>% 
+  group_by(ticker) %>% 
+  mutate(
+    balance_sheet = list(yfinance::get_bs(ticker = ticker, report_type = "quarterly"))
+  )
+
+```
+
+```{r}
+yfinance::get_bs(ticker = "GME", report_type = "quarterly")
+```
+
