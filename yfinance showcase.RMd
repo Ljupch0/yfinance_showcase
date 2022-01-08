@@ -4,13 +4,11 @@ output: html_notebook
 ---
 
 ```{r}
-# remotes::install_github("ljupch0/yfinance")
+#remotes::install_github("ljupch0/yfinance")
 
 library(yfinance)
 library(tidyverse)
 ```
-
-
 
 
 Find the yahoo finance ticker need to pull data for your group of companies. 
@@ -25,7 +23,7 @@ search_stock(search_term = "594918104", keep_results = "top")
 
 
 # Company Names
-companies <- c("Novo Nordisk", "Regeneron Pharmaceuticals Inc.", "Alexion Pharmaceuticals Inc.", "Vertex Pharmaceuticals Inc.", "Jazz Pharmaceuticals", "Incyte Corp.", "Biomarin Pharmaceutical Inc.", "United Therapeutics Corp.")
+companies <- c("Novo Nordisk", "Regeneron Pharmaceuticals Inc.", "Vertex Pharmaceuticals Inc.", "Jazz Pharmaceuticals", "Incyte Corp.", "Biomarin Pharmaceutical Inc.", "United Therapeutics Corp.")
 
 # Search and return all results
 yfinance::search_stock(search_term = "Novo Nordisk", keep_results = "all")
@@ -34,28 +32,19 @@ yfinance::search_stock(search_term = "Novo Nordisk", keep_results = "all")
 # Search and return top results
 yfinance::search_stock(search_term = companies, keep_results = "top")
 
-
-
 ```
 
 
 
 WRONG TICKERS
 ```{r}
-result <- get_cf(ticker = "APPL") # wrong ticker APPL instead of AAPL
-
-attributes(result)
+result <- get_cf(ticker = c("APPL", "AAPL")) # wrong ticker APPL instead of AAPL
 ```
 
 
 
 
 CURRENT and GENERAL DATA
-
-# If you already have tickers, you can cleanly get company names
-```{r}
-yfinance::get_company_names(ticker = c("AAPL", "MSFT"))
-```
 
 # Get stock sector, industry, business description and other. Useful if making presentations.
 ```{r}
@@ -71,7 +60,6 @@ yfinance::get_price(ticker = "AA")
 
 
 HISTORICAL FINANCIAL Data
-
 
 ```{r}
 # Cash Flow
@@ -104,7 +92,7 @@ biotech_balance_sheets <- tibble(
 
 ```
 
-# Unnested Data
+# Regular unested Data
 ```{r}
 biotech_financials <- yfinance::get_financials(ticker = biotech_balance_sheets$ticker, report_type = "quarterly") 
 
@@ -117,8 +105,7 @@ biotech_financials2 <- biotech_financials %>%
 # Plot Ratios  
 biotech_financials2 %>% 
   group_by(ticker) %>% 
-  dplyr::filter(date == last(date)) %>% 
-  ungroup() %>% 
+  dplyr::filter(date == first(date)) %>% 
   ggplot()+
   geom_bar(mapping = aes(x = reorder(ticker, ebit_margin), y = ebit_margin, fill = ticker), stat="identity" )+
   theme_minimal()
